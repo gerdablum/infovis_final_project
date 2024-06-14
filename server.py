@@ -15,20 +15,16 @@ def get_top_10_songs(country):
     top_songs = data_manager.get_top_10_songs_per_country_and_time(country, date)
     return jsonify(top_songs)
 
-@app.route('/api/clusterGenres', methods=['GET'])
-def get_genres_cluster():
-    all_unique_genres = data_manager.cluster_by_genre()
-    return jsonify(all_unique_genres)
+@app.route('/api/songs/<country>', methods=['GET'])
+def get_all_songs_per_country(country):
+    songs = data_manager.get_all_songs_by_country(country)
+    return jsonify(songs)
 
-@app.route('/api/clusterAudioFeatures', methods=['GET'])
-def get_audio_features_cluster():
-    cluster_points = data_manager.cluster_by_audio_features()
+@app.route('/api/getSongs', methods=['GET'])
+def load_songs_datapoints():
+    cluster_points = data_manager.get_umap_songs()
     return jsonify(cluster_points)
 
-@app.route('/api/trackLength', methods=['GET'])
-def get_track_length():
-    all_track_lengths = data_manager.get_track_lengths()
-    return jsonify(all_track_lengths)
 
 @app.route('/api/genres', methods=['GET'])
 def get_genres():

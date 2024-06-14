@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>InfoVis UE 2024</title>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='styles/style.css')}}">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div id="main_container" class="main_container">
+
+        <div class="title_div">
+            <h1>InfoVis UE 2024</h1>
+            <p>Alina Jaud (12209471), Jakob Kohlhas (12208214)</p>
+        </div>
+
+        <!-- Scatterplot -->
+        <div class="container">
+            <h2>Scatterplot: Aggregated Teams PCA (PC1, PC2)</h2>
+            <br>
+            <p class="scatterplot_tooltip tooltip" id="scatterplot_tooltip"></p>
+            <svg id="scatterplot"></svg>
+        </div>
+    </div>
+    <script src="{{url_for('static', filename='js/scatterplot.js')}}"></script>
+</body>
+</html>
