@@ -16,14 +16,21 @@
         </div>
 
         <!-- Scatterplot -->
-        <div class="container">
+        <div class="container" id="scatterplotContainer">
             <h2>Spotify Chart Songs from 2014-2022</h2>
+
+                <label for="countryDropdown">Select Country:</label>
+                <select id="countryDropdown"></select>
+
             <br>
             <p class="scatterplot_tooltip tooltip" id="scatterplot_tooltip"></p>
             <svg id="scatterplot"></svg>
+            <div id="checkboxContainer"></div>
+            <button onclick="sendSelectedFeatures()">Cluster!</button>
         </div>
 
-        <div class="container">
+        <!-- Radial chart -->
+        <div class="container" id="radialChartContainer">
             <h2>Song features</h2>
             <br>
             <div id="hint">Click on a point in the scatterplot to view song features</div>

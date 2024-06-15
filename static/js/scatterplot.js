@@ -15,16 +15,43 @@
      }
  };
 
+function addCheckBoxes() {
 
+    const featureList = [
+        "acousticness", "valence", "tempo", "speechiness", "liveness",
+        "key", "instrumentalness", "energy", "danceability"
+    ];
+
+    // Container for checkboxes
+    const container = document.getElementById('checkboxContainer');
+
+    // Create checkboxes dynamically
+    featureList.forEach(feature => {
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = feature;
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(` ${feature.charAt(0).toUpperCase() + feature.slice(1)}`));
+        container.appendChild(label);
+        container.appendChild(document.createElement('br'));
+
+    });
+
+}
 document.addEventListener("DOMContentLoaded", function() {
 
+    addCheckBoxes();
     fetchAndStoreSongs().then(rawData => {
 
     const heatmapData = rawData
 
+    let parent = document.getElementById("scatterplotContainer");
+    let parentWith = parent.offsetWidth - 40;
     const margin = {top: 20, right: 20, bottom: 20, left: 20},
-          width = 700 - margin.left - margin.right,
-          height = 700 - margin.top - margin.bottom;
+          width = parentWith - margin.left - margin.right,
+          height = parentWith - margin.top - margin.bottom;
+
 
     const svg = d3.select("#scatterplot")
                   .attr("width", width + margin.left + margin.right)
@@ -61,25 +88,62 @@ document.addEventListener("DOMContentLoaded", function() {
                 .attr('cy', d => zy(d.embedding_1));
         });
 
-    zoomableLayer.selectAll("circle")
-       .data(heatmapData)
-       .enter()
-       .append("circle")
-       .attr("cx", d => xScale(d.embedding_0))
-       .attr("cy", d => yScale(d.embedding_1))
-       .attr("r", 5)
-       .attr("class", d => `team-dot ${d['name'].replace(/\s+/g, '-')}`)
-       .style("fill", "grey")
-       .style("cursor", "pointer")
-       .on("click", function(event, d) {
-        svg.selectAll("circle").style("stroke", "none");
-        d3.select(this)
-            .style("stroke", "red")
-            .style("stroke-width", 2);
-        createRadialChart(d['track_id']);
-    });
-
+    addDots(heatmapData);
     svg.call(zoom);
 
+     // dropdown selection
+    const uniqueCountries = [...new Set(rawData.map(d => d.country))];
+    uniqueCountries.unshift("all countries");
+
+    const dropdown = d3.select("#countryDropdown");
+
+    dropdown.append("option")
+        .text("Select a country")
+        .attr("disabled", true)
+        .attr("selected", true);
+
+    dropdown.selectAll("option.country-option")
+        .data(uniqueCountries)
+        .enter()
+        .append("option")
+        .attr("class", "country-option")
+        .attr("value", d => d)
+        .text(d => d);
+
+    dropdown.on("change", function(event) {
+        const selectedValue = d3.select(this).property("value");
+        let filteredData;
+
+        if (selectedValue === "all countries") {
+            filteredData = rawData;
+        } else {
+            filteredData = rawData.filter(d => d.country === selectedValue);
+        }
+
+        zoomableLayer.selectAll("circle").remove();
+
+       addDots(filteredData);
+    });
+
+
+        function addDots(data) {
+            zoomableLayer.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", d => xScale(d.embedding_0))
+                .attr("cy", d => yScale(d.embedding_1))
+                .attr("r", 5)
+                .attr("class", d => `team-dot ${d['name'].replace(/\s+/g, '-')}`)
+                .style("fill", "grey")
+                .style("cursor", "pointer")
+                .on("click", function (event, d) {
+                    svg.selectAll("circle").style("stroke", "none");
+                    d3.select(this)
+                        .style("stroke", "red")
+                        .style("stroke-width", 2);
+                    createRadialChart(d['track_id']);
+                });
+        }
     });
 });

@@ -32,12 +32,18 @@ function listToPrettyString(lst) {
 // adapted from https://yangdanny97.github.io/blog/2019/03/01/D3-Spider-Chart
 function createAudioFeaturesRadialChart(data) {
 
+    let parent = document.getElementById("radialChartContainer");
+    let parentWith = parent.offsetWidth;
+
     const margin = {top: 20, right: 20, bottom: 20, left: 20},
-    width = 700 - margin.left - margin.right,
-    height = 700 - margin.top - margin.bottom;
-    const radius = 200;
-    const svg = d3.create("svg")
-    .attr("class", "chart")
+    width = parentWith - margin.left - margin.right,
+    height = parentWith - margin.top - margin.bottom;
+    const radius = parentWith / 3.5;
+    const svg = d3.select("#radialchart");
+
+    svg.selectAll("*").remove();
+
+    svg.attr("class", "chart")
         .attr("width", width)
         .attr("height", height)
         .attr("viewBox", [0, 0, width, height]);
@@ -89,6 +95,12 @@ function createAudioFeaturesRadialChart(data) {
     let features = Object.keys(data);
     let featureData = features.map((f, i) => {
         let angle = (Math.PI / 2) + (2 * Math.PI * i / features.length);
+        if (f === "key_normalized") {
+            f = "key";
+        }
+        if (f === "tempo_normalized") {
+            f = "tempo";
+        }
         return {
             "name": f,
             "angle": angle,
@@ -166,11 +178,11 @@ function createAudioFeaturesRadialChart(data) {
         .attr("opacity", 0.5);
 
 
-    let element = document.getElementById("radialchart");
+   /* let element = document.getElementById("radialchart");
     if (element.hasChildNodes()) {
         element.removeChild(element.firstChild);
     }
 
-    element.appendChild(svg.node());
+    element.appendChild(svg.node());*/
 
 }

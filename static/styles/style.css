@@ -7,7 +7,7 @@ body {
 }
 .main_container {
     margin: 0 auto;
-    width: 1800px;
+    width: 100%;
     margin-bottom: 40px;
 }
 .main_container .title_div * {
@@ -15,11 +15,12 @@ body {
     padding: 0;
 }
 .container {
+    width: 40%;
     float: left; display: table-cell; vertical-align:top; text-align: center; height: auto; padding-top: 0.5vw;
     padding-bottom: 0.5vw; padding-right: 0.5vw;
     border: 0 solid black;
     font-size: large;
-    padding: 20px 40px;
+    padding: 20px 20px;
     margin: 10px;
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.05) 0 0 0 1px, rgb(209, 213, 219) 0 0 0 1px inset;
@@ -73,6 +74,10 @@ body {
 }
 
 #radialchart {
-    width: 700px;
-    height: 700px;
+    width: 100%;
+    display:inline-block;
+}
+
+#genres {
+    width: 90%;
 }
