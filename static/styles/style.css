@@ -71,3 +71,8 @@ body {
     height: 635px;
     overflow: scroll;
 }
+
+#radialchart {
+    width: 700px;
+    height: 700px;
+}

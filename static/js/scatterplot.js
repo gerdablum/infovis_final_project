@@ -9,7 +9,6 @@
 
          // Store the parsed JSON data in a variable
          const songsData = response.data;
-         console.log(songsData); // You can use console.log to see the data
          return songsData;
      } catch (error) {
          console.error('Error fetching songs:', error);
@@ -19,9 +18,9 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    fetchAndStoreSongs().then(songsData => {
-    const pcaData = songsData;
-    const heatmapData = JSON.parse(rawData).heatmap;
+    fetchAndStoreSongs().then(rawData => {
+
+    const heatmapData = rawData
 
     const margin = {top: 20, right: 20, bottom: 20, left: 20},
           width = 700 - margin.left - margin.right,
@@ -34,26 +33,53 @@ document.addEventListener("DOMContentLoaded", function() {
                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     const xScale = d3.scaleLinear()
-                     .domain(d3.extent(pcaData, d => d.embedding_0))
+                     .domain(d3.extent(heatmapData, d => d.embedding_0))
                      .range([0, width]);
     const yScale = d3.scaleLinear()
-                     .domain(d3.extent(pcaData, d => d.embedding_1))
+                     .domain(d3.extent(heatmapData, d => d.embedding_1))
                      .range([height, 0]);
 
-    const tooltip = d3.select("#scatterplot_tooltip");
-    const infoBox = d3.select("#info_box");
+    const zoomableLayer = svg.append("g")
+        .attr("class", "zoomable-layer");
+    const zoom = d3.zoom()
+    .scaleExtent([0.5, 32])
+    .on("zoom", (event) => {
+            const zx = event.transform.rescaleX(xScale).interpolate(d3.interpolateRound);
+            const zy = event.transform.rescaleY(yScale).interpolate(d3.interpolateRound);
 
-    // Task 5.1: 'By hovering over a dot in the PCA scatterplot, highlight the corresponding team/player on the heatmap (up to 5 points). '
-    svg.selectAll("circle")
-       .data(pcaData)
+            const new_xScale = event.transform.rescaleX(xScale);
+            const new_yScale = event.transform.rescaleY(yScale);
+
+            // Update the axes
+            //svg.select(".x-axis").call(d3.axisBottom(new_xScale));
+            //svg.select(".y-axis").call(d3.axisLeft(new_yScale));
+            console.log("zoomed!!");
+
+            // Update dots
+            zoomableLayer.selectAll("circle")
+                .attr('cx', d => zx(d.embedding_0))
+                .attr('cy', d => zy(d.embedding_1));
+        });
+
+    zoomableLayer.selectAll("circle")
+       .data(heatmapData)
        .enter()
        .append("circle")
-       .attr("cx", d => xScale(d.PC1))
-       .attr("cy", d => yScale(d.PC2))
+       .attr("cx", d => xScale(d.embedding_0))
+       .attr("cy", d => yScale(d.embedding_1))
        .attr("r", 5)
-       .attr("class", d => `team-dot ${d['Team Name'].replace(/\s+/g, '-')}`)
+       .attr("class", d => `team-dot ${d['name'].replace(/\s+/g, '-')}`)
        .style("fill", "grey")
        .style("cursor", "pointer")
+       .on("click", function(event, d) {
+        svg.selectAll("circle").style("stroke", "none");
+        d3.select(this)
+            .style("stroke", "red")
+            .style("stroke-width", 2);
+        createRadialChart(d['track_id']);
+    });
+
+    svg.call(zoom);
 
     });
 });

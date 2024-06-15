@@ -5,6 +5,7 @@
     <title>InfoVis UE 2024</title>
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='styles/style.css')}}">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <div id="main_container" class="main_container">
@@ -16,12 +17,24 @@
 
         <!-- Scatterplot -->
         <div class="container">
-            <h2>Scatterplot: Aggregated Teams PCA (PC1, PC2)</h2>
+            <h2>Spotify Chart Songs from 2014-2022</h2>
             <br>
             <p class="scatterplot_tooltip tooltip" id="scatterplot_tooltip"></p>
             <svg id="scatterplot"></svg>
         </div>
+
+        <div class="container">
+            <h2>Song features</h2>
+            <br>
+            <div id="hint">Click on a point in the scatterplot to view song features</div>
+            <div id ="name"></div>
+            <div id ="artists"></div>
+            <div id ="genres"></div>
+            <p class="heatmap_tooltip tooltip" id="heatmap_tooltip"></p>
+            <svg id="radialchart"></svg>
+        </div>
     </div>
     <script src="{{url_for('static', filename='js/scatterplot.js')}}"></script>
+    <script src="{{url_for('static', filename='js/radialchart.js')}}"></script>
 </body>
 </html>

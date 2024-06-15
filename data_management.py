@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
 from song_dataclass import SpotifySong
-import umap
-from sklearn.preprocessing import StandardScaler
+from ast import literal_eval
 import json
 
 class DataManager:
@@ -15,8 +14,8 @@ class DataManager:
                        "loudness","mode","speechiness","tempo","time_signature","valence"]
 
         self.audio_features = ["acousticness","danceability","instrumentalness","energy","liveness",
-                       "speechiness","valence", "key", "tempo", "time_signature"]
-        self.reducer = umap.UMAP()
+                       "speechiness","valence", "key_normalized", "tempo_normalized"]
+
 
 
 
@@ -37,23 +36,25 @@ class DataManager:
 
 
     def get_umap_songs(self):
-
-        # TODO make umap in preprocessing step
         unique_songs = self._get_unique_tracks(self.dataframe)
-        features = unique_songs[self.audio_features].values
-        scaled_features = StandardScaler().fit_transform(features)
-        embedding = self.reducer.fit_transform(scaled_features)
-        for i in range(embedding.shape[1]):
-            unique_songs[f"embedding_{i}"] = embedding[:, i]
-        return unique_songs.to_dict(orient='records')
+        unique_songs = unique_songs.drop(columns=["artists"])
+        unique_songs = unique_songs.drop(columns=["artist_genres"])
+        unique_songs = unique_songs.to_dict(orient='records')
+        return unique_songs
+
 
     def get_audio_features(self, track_id):
         unique_songs = self._get_unique_tracks(self.dataframe)
-        song = unique_songs[unique_songs['track_id'] == track_id]
+        song_row = unique_songs[unique_songs['track_id'] == track_id]
         attributes = np.array(self.audio_features)
-        attributes = np.append(attributes,'artists')
-        attributes = np.append(attributes, 'name')
-        return song[attributes].to_dict(orient='records')
+        additional_columns = ['artists', 'name', 'artist_genres']
+        attributes = np.append(attributes, additional_columns)
+        song_row = song_row[attributes].to_dict(orient='records')
+        for column in ['artists', 'artist_genres']:
+            for idx, song in enumerate(song_row):
+                    temp_list = self._convert_string_to_list(song[column])
+                    song_row[idx][column] = temp_list
+        return song_row
 
     def get_genres(self):
         df =  self._read_csv_file("./data/unique_genres_with_occurence.csv")
@@ -64,7 +65,7 @@ class DataManager:
     def _read_csv_file(self, file_path):
         try:
             # Read CSV file into a DataFrame
-            df = pd.read_csv(file_path)
+            df = pd.read_csv(file_path, index_col=[0])
 
             # Display the DataFrame (optional)
             print("Columns in CSV file:")
@@ -78,6 +79,9 @@ class DataManager:
     def _get_unique_tracks(self, dataframe):
         unique_tracks_df = dataframe.drop_duplicates(subset='track_id')
         return unique_tracks_df
+
+    def _convert_string_to_list(self, s):
+        return literal_eval(s)
 
     def _convert_to_dataclass(self, row):
         return SpotifySong(
@@ -103,4 +107,3 @@ class DataManager:
                 time_signature=row['time_signature'],
                 valence=row['valence']
             )
-
