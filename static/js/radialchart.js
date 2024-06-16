@@ -177,7 +177,7 @@ function createAudioFeaturesRadialChart(data) {
     svg.append("path")
         .attr("d", path.toString())
         .attr("stroke", "black")
-        .attr("fill", "steelblue")
+        .attr("fill", "#d35400")
         .attr("stroke-opacity", 1)
         .attr("opacity", 0.5);
 

@@ -40,7 +40,13 @@ const createBarChart = (data) => {
         .attr("y", d => y(d.occurence))
         .attr("width", x.bandwidth())
         .attr("height", d => height - y(d.occurence))
-        .attr("fill", "#d35400");
+        .attr("fill", "#d35400")
+        .on("mouseover", function(event, d) {
+            highlightScatterplotDots(d.genre);
+        })
+        .on("mouseout", function(event, d) {
+            removeHighlightScatterplotDots();
+        });
 
     svg.append("g")
         .attr("class", "x-axis")

@@ -66,6 +66,9 @@ document.addEventListener("DOMContentLoaded", function() {
             .style("fill", "none")
             .style("pointer-events", "all");
 
+        // Add highlight layer (initially empty) after the zoomable layer
+        const highlightLayer = svg.append("g").attr("id", "highlightLayer");
+
         const zoom = d3.zoom()
             .scaleExtent([0.5, 32])
             .on("zoom", (event) => {
@@ -74,16 +77,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 zoomableLayer.selectAll("circle")
                     .attr('cx', d => zx(d.embedding_0))
                     .attr('cy', d => zy(d.embedding_1));
+                highlightLayer.selectAll("circle")
+                    .attr('cx', d => zx(d.embedding_0))
+                    .attr('cy', d => zy(d.embedding_1));
             });
 
         svg.call(zoom); // Attach zoom behavior to the svg
 
         function updateScatterplotDots(rawData, filteredData, isClustered = false) {
-            const colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#9467bd", "#8c564b"]; // Distinct colors excluding red
-        
+            const colors = ["#1f77b4", "#2ca02c", "#9467bd", "#8c564b", "#e377c2", "#17becf", "#bcbd22"];
+
             // Remove all circles
             zoomableLayer.selectAll("circle").remove();
-        
+
             // Draw gray circles for all data points
             zoomableLayer.selectAll("circle.grey")
                 .data(rawData.filter(d => !filteredData.includes(d)))
@@ -94,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .attr("r", 3) // smaller radius for gray circles
                 .attr("class", "grey")
                 .style("fill", "lightgray");
-        
+
             // Draw circles for filtered data
             zoomableLayer.selectAll("circle.black")
                 .data(filteredData)
@@ -110,8 +116,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     svg.selectAll("circle").style("stroke", "none").style("r", 3);
                     d3.select(this)
                         .style("stroke", "red")
-                        .style("r", 5)
-                        .style("stroke-width", 2);
+                        .style("r", 3)
+                        .style("stroke-width", 1);
                     createRadialChart(d['track_id']);
                 });
         }
@@ -178,12 +184,12 @@ document.addEventListener("DOMContentLoaded", function() {
             if (selectedFeatures.length > 0) {
                 const clusteredData = await sendFeaturesForClustering(selectedFeatures);
                 console.log(clusteredData);
-                
+
                 // Update rawData to the clustered data
                 rawData = clusteredData.data;
                 isClustered = true;
                 updateRemoveClusteringButtonState();
-                
+
                 // Filter the data as per the selected country before updating scatterplot
                 const selectedValue = dropdown.property("value");
                 let filteredClusteredData;
@@ -192,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else {
                     filteredClusteredData = clusteredData.data.filter(d => d.country === selectedValue);
                 }
-                
+
                 updateScatterplotDots(rawData, filteredClusteredData, true); // Update with clustered data
             } else {
                 console.error('No features selected for clustering');
@@ -218,3 +224,30 @@ document.addEventListener("DOMContentLoaded", function() {
         updateRemoveClusteringButtonState();
     });
 });
+
+const highlightScatterplotDots = (genre) => {
+    const selectedCountry = document.getElementById('selectedCountry').textContent;
+
+    // Remove any existing highlight circles
+    d3.select("#highlightLayer").selectAll("circle").remove();
+
+    d3.select("#zoomableLayer")
+        .selectAll("circle")
+        .each(function(d) {
+            if (d.artist_genres.includes(genre) && (d.country === selectedCountry || selectedCountry === 'all countries')) {
+                const [cx, cy] = [d3.select(this).attr('cx'), d3.select(this).attr('cy')];
+
+                d3.select("#highlightLayer").append("circle")
+                    .attr("cx", cx)
+                    .attr("cy", cy)
+                    .attr("r", 3)
+                    .style("fill", "#e67e22")
+                    .style("opacity", 0.7)
+                    .style("stroke", "none");
+            }
+        });
+};
+
+const removeHighlightScatterplotDots = () => {
+    d3.select("#highlightLayer").selectAll("circle").remove();
+};

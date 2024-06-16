@@ -39,14 +39,14 @@ class DataManager:
     def get_umap_songs(self):
         unique_songs = self._get_unique_tracks(self.dataframe)
         unique_songs = unique_songs.drop(columns=["artists"])
-        unique_songs = unique_songs.drop(columns=["artist_genres"])
+        ##unique_songs = unique_songs.drop(columns=["artist_genres"])
         unique_songs = unique_songs.to_dict(orient='records')
         return unique_songs
 
     def cluster(self, features, no_of_clusters):
         unique_songs = self._get_unique_tracks(self.dataframe)
         unique_songs = unique_songs.drop(columns=["artists"])
-        unique_songs = unique_songs.drop(columns=["artist_genres"])
+        #unique_songs = unique_songs.drop(columns=["artist_genres"])
 
         # Ensure that features are present in the dataframe
         missing_features = [feature for feature in features if feature not in unique_songs.columns]
