@@ -37,6 +37,15 @@ def get_audio_features_for_song(track_id):
     song_with_audio_features = data_manager.get_audio_features(track_id)
     return jsonify(song_with_audio_features)
 
+@app.route('/api/cluster', methods=['POST'])
+def get_cluster():
+    data = request.get_json()
+    features = data.get('features')
+    no_of_clusters = request.headers.get('no_of_clusters')
+    result = data_manager.cluster(features, no_of_clusters)
+    return jsonify(result)
+
 if __name__ == '__main__':
     data_manager = DataManager()
     app.run(debug=True)
+

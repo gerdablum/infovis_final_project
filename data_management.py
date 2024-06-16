@@ -1,8 +1,9 @@
+from ast import literal_eval
+import json
 import pandas as pd
 import numpy as np
 from song_dataclass import SpotifySong
-from ast import literal_eval
-import json
+from sklearn.cluster import KMeans
 
 class DataManager:
 
@@ -41,6 +42,23 @@ class DataManager:
         unique_songs = unique_songs.drop(columns=["artist_genres"])
         unique_songs = unique_songs.to_dict(orient='records')
         return unique_songs
+
+    def cluster(self, features, no_of_clusters):
+        unique_songs = self._get_unique_tracks(self.dataframe)
+        unique_songs = unique_songs.drop(columns=["artists"])
+        unique_songs = unique_songs.drop(columns=["artist_genres"])
+        cluster_values = unique_songs[features]
+        kmeans = KMeans(n_clusters=no_of_clusters)
+        kmeans.fit(cluster_values.to_numpy())
+        labels = kmeans.labels_
+        centroids = kmeans.cluster_centers_
+
+        unique_songs["cluster_assignment"] = labels
+
+        return {
+            "data" : unique_songs.to_dict(orient='records'),
+            "centroids": centroids.tolist()
+        }
 
 
     def get_audio_features(self, track_id):

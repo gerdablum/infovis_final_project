@@ -1,20 +1,36 @@
- // Define the endpoint URL
- const endpoint = 'api/getSongs';
 
- // Function to fetch and store JSON data
+ const endpointSongs = 'api/getSongs';
+ const endpointCluster = 'api/cluster'
+
+ let xScale;
+ let yScale;
+
+
  const fetchAndStoreSongs = async () => {
      try {
          // Make a GET request to the endpoint
-         const response = await axios.get(endpoint);
-
-         // Store the parsed JSON data in a variable
+         const response = await axios.get(endpointSongs);
          const songsData = response.data;
-         return songsData;
+        return songsData;
      } catch (error) {
          console.error('Error fetching songs:', error);
      }
  };
 
+ const sendFeaturesForClustering = async () => {
+    try {
+        // Make a POST request to the endpoint
+        const response = await axios.post(endpointCluster);
+        const songsData = response.data;
+
+        // recolor the dots
+        const svg = d3.select("#scatterplot")
+        const zoomableLayer = d3.select("#zoomableLayer");
+        addDots(songsData, zoomableLayer, svg);
+    } catch (error) {
+        console.error('Error fetching songs:', error);
+    }
+};
 function addCheckBoxes() {
 
     const featureList = [
@@ -39,12 +55,33 @@ function addCheckBoxes() {
     });
 
 }
+
+function addDots(data, zoomableLayer, svg) {
+    zoomableLayer.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", d => xScale(d.embedding_0))
+        .attr("cy", d => yScale(d.embedding_1))
+        .attr("r", 5)
+        .attr("class", d => `team-dot ${d['name'].replace(/\s+/g, '-')}`)
+        .style("fill", "grey")
+        .style("cursor", "pointer")
+        .on("click", function (event, d) {
+            svg.selectAll("circle").style("stroke", "none");
+            d3.select(this)
+                .style("stroke", "red")
+                .style("stroke-width", 2);
+            createRadialChart(d['track_id']);
+        });
+}
+
 document.addEventListener("DOMContentLoaded", function() {
 
     addCheckBoxes();
     fetchAndStoreSongs().then(rawData => {
 
-    const heatmapData = rawData
+    const scatterplotData = rawData
 
     let parent = document.getElementById("scatterplotContainer");
     let parentWith = parent.offsetWidth - 40;
@@ -59,14 +96,15 @@ document.addEventListener("DOMContentLoaded", function() {
                   .append("g")
                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    const xScale = d3.scaleLinear()
-                     .domain(d3.extent(heatmapData, d => d.embedding_0))
+    xScale = d3.scaleLinear()
+                     .domain(d3.extent(scatterplotData, d => d.embedding_0))
                      .range([0, width]);
-    const yScale = d3.scaleLinear()
-                     .domain(d3.extent(heatmapData, d => d.embedding_1))
+    yScale = d3.scaleLinear()
+                     .domain(d3.extent(scatterplotData, d => d.embedding_1))
                      .range([height, 0]);
 
     const zoomableLayer = svg.append("g")
+        .attr("id", "zoomableLayer")
         .attr("class", "zoomable-layer");
     const zoom = d3.zoom()
     .scaleExtent([0.5, 32])
@@ -88,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .attr('cy', d => zy(d.embedding_1));
         });
 
-    addDots(heatmapData);
+    addDots(scatterplotData, zoomableLayer, svg);
     svg.call(zoom);
 
      // dropdown selection
@@ -124,26 +162,5 @@ document.addEventListener("DOMContentLoaded", function() {
 
        addDots(filteredData);
     });
-
-
-        function addDots(data) {
-            zoomableLayer.selectAll("circle")
-                .data(data)
-                .enter()
-                .append("circle")
-                .attr("cx", d => xScale(d.embedding_0))
-                .attr("cy", d => yScale(d.embedding_1))
-                .attr("r", 5)
-                .attr("class", d => `team-dot ${d['name'].replace(/\s+/g, '-')}`)
-                .style("fill", "grey")
-                .style("cursor", "pointer")
-                .on("click", function (event, d) {
-                    svg.selectAll("circle").style("stroke", "none");
-                    d3.select(this)
-                        .style("stroke", "red")
-                        .style("stroke-width", 2);
-                    createRadialChart(d['track_id']);
-                });
-        }
     });
 });
