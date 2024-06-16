@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     d3.select(this)
                         .style("stroke", "red")
                         .style("r", 3)
-                        .style("stroke-width", 1);
+                        .style("stroke-width", 2);
                     createRadialChart(d['track_id']);
                 });
         }
@@ -169,13 +169,10 @@ document.addEventListener("DOMContentLoaded", function() {
             updateScatterplotDots(rawData, filteredData, isClustered); // Check isClustered flag
 
             // Trigger bar chart update
-            if (selectedValue !== "all countries") {
-                const genresData = await fetchGenres(selectedValue);
-                d3.select("#barchart").selectAll("*").remove(); // Clear previous chart
-                createBarChart(genresData);
-            } else {
-                d3.select("#barchart").selectAll("*").remove(); // Clear chart if "all countries" is selected
-            }
+            const genresData = await fetchGenres(selectedValue);
+            d3.select("#barchart").selectAll("*").remove(); // Clear previous chart
+            createBarChart(genresData);
+
         });
 
         // Add event listener for reclustering
@@ -241,9 +238,10 @@ const highlightScatterplotDots = (genre) => {
                     .attr("cx", cx)
                     .attr("cy", cy)
                     .attr("r", 3)
-                    .style("fill", "#e67e22")
-                    .style("opacity", 0.7)
-                    .style("stroke", "none");
+                    .style("fill", "transparent")
+                    .style("opacity", 1)
+                    .style("stroke", "#e67e22")
+                    .style("stroke-width", 2);
             }
         });
 };
