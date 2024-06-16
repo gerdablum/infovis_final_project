@@ -85,10 +85,13 @@ document.addEventListener("DOMContentLoaded", function() {
         svg.call(zoom); // Attach zoom behavior to the svg
 
         function updateScatterplotDots(rawData, filteredData, isClustered = false) {
+           // const colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#9467bd", "#8c564b"]; // Distinct colors excluding red
+
             const colors = ["#1f77b4", "#2ca02c", "#9467bd", "#8c564b", "#e377c2", "#17becf", "#bcbd22"];
 
             // Remove all circles
             zoomableLayer.selectAll("circle").remove();
+
 
             // Draw gray circles for all data points
             zoomableLayer.selectAll("circle.grey")
@@ -119,6 +122,12 @@ document.addEventListener("DOMContentLoaded", function() {
                         .style("r", 3)
                         .style("stroke-width", 2);
                     createRadialChart(d['track_id']);
+
+                    // change iframeUrl
+                    const newUrl = "https://open.spotify.com/embed/track/" + d['track_id'] + "?utm_source=generator";
+                    const iframe = document.getElementById('spotify-iframe');
+                    iframe.style.display = "block";
+                    iframe.src = newUrl;
                 });
         }
 
@@ -182,10 +191,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 const clusteredData = await sendFeaturesForClustering(selectedFeatures);
                 console.log(clusteredData);
 
+
                 // Update rawData to the clustered data
                 rawData = clusteredData.data;
                 isClustered = true;
                 updateRemoveClusteringButtonState();
+
 
                 // Filter the data as per the selected country before updating scatterplot
                 const selectedValue = dropdown.property("value");
@@ -195,6 +206,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else {
                     filteredClusteredData = clusteredData.data.filter(d => d.country === selectedValue);
                 }
+
 
                 updateScatterplotDots(rawData, filteredClusteredData, true); // Update with clustered data
             } else {
