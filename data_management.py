@@ -47,8 +47,14 @@ class DataManager:
         unique_songs = self._get_unique_tracks(self.dataframe)
         unique_songs = unique_songs.drop(columns=["artists"])
         unique_songs = unique_songs.drop(columns=["artist_genres"])
+
+        # Ensure that features are present in the dataframe
+        missing_features = [feature for feature in features if feature not in unique_songs.columns]
+        if missing_features:
+            raise KeyError(f"Features missing from dataframe: {missing_features}")
+
         cluster_values = unique_songs[features]
-        kmeans = KMeans(n_clusters=no_of_clusters)
+        kmeans = KMeans(n_clusters=int(no_of_clusters))
         kmeans.fit(cluster_values.to_numpy())
         labels = kmeans.labels_
         centroids = kmeans.cluster_centers_
@@ -56,9 +62,10 @@ class DataManager:
         unique_songs["cluster_assignment"] = labels
 
         return {
-            "data" : unique_songs.to_dict(orient='records'),
+            "data": unique_songs.to_dict(orient='records'),
             "centroids": centroids.tolist()
         }
+
 
 
     def get_audio_features(self, track_id):

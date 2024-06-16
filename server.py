@@ -41,9 +41,12 @@ def get_audio_features_for_song(track_id):
 def get_cluster():
     data = request.get_json()
     features = data.get('features')
-    no_of_clusters = request.headers.get('no_of_clusters')
+    no_of_clusters = data.get('no_of_clusters', 5)  # Default to 5 if not provided
+    if features is None:
+        return jsonify({"error": "features are required"}), 400
     result = data_manager.cluster(features, no_of_clusters)
     return jsonify(result)
+
 
 if __name__ == '__main__':
     data_manager = DataManager()

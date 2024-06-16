@@ -1,7 +1,10 @@
 function createRadialChart(trackId) {
-    document.querySelector('#hint').style.display = 'none'
     axios.get('/api/audioFeatures/' + trackId)
     .then(response => {
+        // Hide the hint and show the song info
+        document.querySelector('#hint').style.display = 'none';
+        document.querySelector('#song_info').style.display = 'block';
+        document.querySelector('#radialchart').style.display = 'block';
 
         document.querySelector('#name').textContent  = "Song title: " + response.data[0]['name'];
 
@@ -16,6 +19,7 @@ function createRadialChart(trackId) {
     })
     .catch(error => console.error('Error:', error));
 }
+
 
 function listToPrettyString(lst) {
     let str = "";

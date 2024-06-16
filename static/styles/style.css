@@ -35,6 +35,9 @@ body {
     text-align: left;
 }
 
+h2{
+    margin: 0px;
+}
 
 .svg_line_plot {
     float:left; align-content: center; height: auto; width: 85%;
@@ -80,4 +83,30 @@ body {
 
 #genres {
     width: 90%;
+}
+
+#checkboxContainer {
+     padding-bottom: 10px;
+}
+
+#checkboxContainer div {
+    display: inline-block;
+    padding-right: 10px;
+}
+
+.dropdown_inputs, .checkbox_inputs {
+    border: 1px solid #ccc;
+    padding:15px;
+    display: inline-block;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+#song_info, #hint{
+    margin-top: 20px;
+}
+
+
+#song_info, #radialchart {
+    display: none;
 }

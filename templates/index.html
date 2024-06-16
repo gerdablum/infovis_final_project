@@ -19,24 +19,32 @@
         <div class="container" id="scatterplotContainer">
             <h2>Spotify Chart Songs from 2014-2022</h2>
 
-                <label for="countryDropdown">Select Country:</label>
-                <select id="countryDropdown"></select>
-
-            <br>
             <p class="scatterplot_tooltip tooltip" id="scatterplot_tooltip"></p>
             <svg id="scatterplot"></svg>
-            <div id="checkboxContainer"></div>
-            <button onclick="sendFeaturesForClustering()">Cluster!</button>
+
+            <div class="dropdown_inputs">
+                <label for="countryDropdown">Select Country:</label>
+                <select id="countryDropdown"></select>
+            </div>
+
+            <div class="checkbox_inputs">
+                <div id="checkboxContainer"></div>
+                <button id="recluster">Cluster</button>
+                <button id="removeclustering">Remove clustering</button>
+            </div>
         </div>
 
         <!-- Radial chart -->
         <div class="container" id="radialChartContainer">
             <h2>Song features</h2>
-            <br>
+            
             <div id="hint">Click on a point in the scatterplot to view song features</div>
-            <div id ="name"></div>
-            <div id ="artists"></div>
-            <div id ="genres"></div>
+            <div id="song_info">
+                <div id ="name"></div>
+                <div id ="artists"></div>
+                <div id ="genres"></div>
+            </div>
+
             <p class="heatmap_tooltip tooltip" id="heatmap_tooltip"></p>
             <svg id="radialchart"></svg>
         </div>
