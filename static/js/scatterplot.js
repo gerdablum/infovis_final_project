@@ -57,25 +57,32 @@ document.addEventListener("DOMContentLoaded", function() {
         yScale = d3.scaleLinear().domain(d3.extent(scatterplotData, d => d.embedding_1)).range([height, 0]);
 
         // Make scatterplot layout zoomable
-        const zoomableLayer = svg.append("g").attr("id", "zoomableLayer").attr("class", "zoomable-layer");
+
+        svg.append("rect")
+            .attr("width", width)
+            .attr("height", height)
+            .style("fill", "none")
+            .style("pointer-events", "all");
+
         const zoom = d3.zoom()
             .scaleExtent([0.5, 32])
             .on("zoom", (event) => {
+                console.log("zoomed!");
                 const zx = event.transform.rescaleX(xScale).interpolate(d3.interpolateRound);
                 const zy = event.transform.rescaleY(yScale).interpolate(d3.interpolateRound);
-                zoomableLayer.selectAll("circle")
+                svg.selectAll("circle")
                     .attr('cx', d => zx(d.embedding_0))
                     .attr('cy', d => zy(d.embedding_1));
             });
 
         function updateScatterplotDots(rawData, filteredData, isClustered = false) {
             const colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#9467bd", "#8c564b"]; // Distinct colors excluding red
-        
+
             // Remove all circles
-            zoomableLayer.selectAll("circle").remove();
-        
+            svg.selectAll("circle").remove();
+
             // Draw gray circles for all data points
-            zoomableLayer.selectAll("circle.grey")
+            svg.selectAll("circle.grey")
                 .data(rawData.filter(d => !filteredData.includes(d)))
                 .enter()
                 .append("circle")
@@ -84,9 +91,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 .attr("r", 3) // smaller radius for gray circles
                 .attr("class", "grey")
                 .style("fill", "lightgray");
-        
+
             // Draw circles for filtered data
-            zoomableLayer.selectAll("circle.black")
+            svg.selectAll("circle.black")
                 .data(filteredData)
                 .enter()
                 .append("circle")
@@ -105,8 +112,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     createRadialChart(d['track_id']);
                 });
         }
-            
-        //svg.call(zoom);
+
+        svg.call(zoom);
 
         // Add feature checkboxes
         const featureList = ["acousticness", "valence", "tempo", "speechiness", "liveness", "key", "instrumentalness", "energy", "danceability"];
@@ -156,12 +163,12 @@ document.addEventListener("DOMContentLoaded", function() {
             if (selectedFeatures.length > 0) {
                 const clusteredData = await sendFeaturesForClustering(selectedFeatures);
                 console.log(clusteredData);
-                
+
                 // Update rawData to the clustered data
                 rawData = clusteredData.data;
                 isClustered = true;
                 updateRemoveClusteringButtonState();
-                
+
                 // Filter the data as per the selected country before updating scatterplot
                 const selectedValue = dropdown.property("value");
                 let filteredClusteredData;
@@ -170,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else {
                     filteredClusteredData = clusteredData.data.filter(d => d.country === selectedValue);
                 }
-                
+
                 updateScatterplotDots(rawData, filteredClusteredData, true); // Update with clustered data
             } else {
                 console.error('No features selected for clustering');
