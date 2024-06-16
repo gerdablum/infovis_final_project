@@ -34,26 +34,36 @@
             </div>
         </div>
 
-         <!-- Bar chart -->
-        <div class="container" id="barChartContainer">
+        <!-- Bar chart -->
+          <div class="container" id="barChartContainer">
             <h2>Top 20 Genres in <span id="selectedCountry">Selected Country</span></h2>
             <svg id="barchart"></svg>
-        </div>  
+        </div>
 
         <!-- Radial chart -->
         <div class="container" id="radialChartContainer">
             <h2>Features of Selected Song</h2>
-            
             <div id="song_info_hint">Click on a point in the scatterplot to view song features.</div>
-            <div id="song_info">
-                <div id ="name"></div>
-                <div id ="artists"></div>
-                <div id ="genres"></div>
+            <div class="flex-container">
+                <div class="left">
+
+                    <div id="song_info">
+                        <div id ="name"></div>
+                        <div id ="artists"></div>
+                        <div id ="genres"></div>
+                    </div>
+                </div>
+                <div class="right">
+                    <iframe id="spotify-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/5eyTC5GZzpzlN7YRO9AoPf?utm_source=generator"
+                     width="100%" height="152" frameBorder="0" allowfullscreen=""
+                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy">
+                    </iframe>
+                </div>
             </div>
 
             <p class="heatmap_tooltip tooltip" id="heatmap_tooltip"></p>
             <svg id="radialchart"></svg>
-        </div>      
+        </div>
     </div>
     <script src="{{url_for('static', filename='js/scatterplot.js')}}"></script>
     <script src="{{url_for('static', filename='js/radialchart.js')}}"></script>
