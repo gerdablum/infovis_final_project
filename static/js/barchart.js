@@ -11,9 +11,9 @@ const fetchGenres = async (country = 'all countries') => {
 const createBarChart = (data) => {
     document.querySelector('#barchart').style.display = 'block';
 
-    const margin = { top: 20, right: 100, bottom: 100, left: 100 };
+    const margin = { top: 20, right: 100, bottom: 110, left: 100 };
     const width = 800 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const height = 250 - margin.top - margin.bottom;
 
     const svg = d3.select("#barchart")
         .attr("width", width + margin.left + margin.right)

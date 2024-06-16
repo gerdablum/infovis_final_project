@@ -37,9 +37,9 @@ function listToPrettyString(lst) {
 function createAudioFeaturesRadialChart(data) {
 
     let parent = document.getElementById("radialChartContainer");
-    let parentWith = parent.offsetWidth;
+    let parentWith = parent.offsetWidth - 320;
 
-    const margin = {top: 20, right: 20, bottom: 20, left: 20},
+    const margin = {top: 0, right: 20, bottom: 0, left: 20},
     width = parentWith - margin.left - margin.right,
     height = parentWith - margin.top - margin.bottom;
     const radius = parentWith / 3.5;
