@@ -2,7 +2,7 @@ function createRadialChart(trackId) {
     axios.get('/api/audioFeatures/' + trackId)
     .then(response => {
         // Hide the hint and show the song info
-        document.querySelector('#hint').style.display = 'none';
+        document.querySelector('#song_info_hint').style.display = 'none';
         document.querySelector('#song_info').style.display = 'block';
         document.querySelector('#radialchart').style.display = 'block';
 

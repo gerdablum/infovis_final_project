@@ -81,11 +81,16 @@ class DataManager:
                     song_row[idx][column] = temp_list
         return song_row
 
-    def get_genres(self):
-        df =  self._read_csv_file("./data/unique_genres_with_occurence.csv")
-        df = df.head(10)
-        df = df[['genre','occurence']]
-        return df.to_dict(orient='records')
+    def get_genres_by_country(self, country):
+        if country == 'all countries':
+            df_country = self.dataframe
+        else:
+            df_country = self.get_all_songs_by_country(country)
+        genres_series = df_country['artist_genres'].apply(lambda x: literal_eval(x)).explode()
+        genres_count = genres_series.value_counts().reset_index()
+        genres_count.columns = ['genre', 'occurence']
+        genres_count = genres_count.sort_values(by='occurence', ascending=False).head(20)  # Limit to top 20 genres
+        return genres_count.to_dict(orient='records')
 
     def _read_csv_file(self, file_path):
         try:

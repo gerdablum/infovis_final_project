@@ -102,11 +102,25 @@ h2{
     margin-top: 10px;
 }
 
-#song_info, #hint{
+#song_info, #song_info_hint, #barchart{
     margin-top: 20px;
 }
 
-
-#song_info, #radialchart {
+#song_info, #radialchart, #barchart {
     display: none;
+}
+
+#barchart {
+    width: 100%;
+    padding: 0 0 20px 0;
+}
+
+#selectedCountry {
+    background: #e67e22;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    display: inline-block;
+    font-size: 20px;
+    font-style: italic;
 }

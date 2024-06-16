@@ -28,9 +28,11 @@ def load_songs_datapoints():
 
 @app.route('/api/genres', methods=['GET'])
 def get_genres():
-    genres = data_manager.get_genres()
+    country = request.args.get('country')
+    if country is None:
+        return jsonify({"error": "country is required"}), 400
+    genres = data_manager.get_genres_by_country(country)
     return jsonify(genres)
-
 
 @app.route('/api/audioFeatures/<track_id>', methods=['GET'])
 def get_audio_features_for_song(track_id):

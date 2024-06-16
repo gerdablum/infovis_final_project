@@ -58,6 +58,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Make scatterplot layout zoomable
         const zoomableLayer = svg.append("g").attr("id", "zoomableLayer").attr("class", "zoomable-layer");
+
+        // Add a background rectangle for capturing zoom events
+        zoomableLayer.append("rect")
+            .attr("width", width)
+            .attr("height", height)
+            .style("fill", "none")
+            .style("pointer-events", "all");
+
         const zoom = d3.zoom()
             .scaleExtent([0.5, 32])
             .on("zoom", (event) => {
@@ -67,6 +75,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     .attr('cx', d => zx(d.embedding_0))
                     .attr('cy', d => zy(d.embedding_1));
             });
+
+        svg.call(zoom); // Attach zoom behavior to the svg
 
         function updateScatterplotDots(rawData, filteredData, isClustered = false) {
             const colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#9467bd", "#8c564b"]; // Distinct colors excluding red
@@ -105,8 +115,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     createRadialChart(d['track_id']);
                 });
         }
-            
-        //svg.call(zoom);
+
+        // Initial rendering of the scatterplot dots
+        updateScatterplotDots(rawData, rawData, isClustered);
 
         // Add feature checkboxes
         const featureList = ["acousticness", "valence", "tempo", "speechiness", "liveness", "key", "instrumentalness", "energy", "danceability"];
@@ -139,8 +150,10 @@ document.addEventListener("DOMContentLoaded", function() {
         dropdown.property("value", "all countries");
         updateScatterplotDots([], rawData);
 
-        dropdown.on("change", function (event) {
+        dropdown.on("change", async function (event) {
             const selectedValue = d3.select(this).property("value");
+            document.getElementById('selectedCountry').textContent = selectedValue;
+
             let filteredData;
             if (selectedValue === "all countries") {
                 filteredData = rawData;
@@ -148,6 +161,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 filteredData = rawData.filter(d => d.country === selectedValue);
             }
             updateScatterplotDots(rawData, filteredData, isClustered); // Check isClustered flag
+
+            // Trigger bar chart update
+            if (selectedValue !== "all countries") {
+                const genresData = await fetchGenres(selectedValue);
+                d3.select("#barchart").selectAll("*").remove(); // Clear previous chart
+                createBarChart(genresData);
+            } else {
+                d3.select("#barchart").selectAll("*").remove(); // Clear chart if "all countries" is selected
+            }
         });
 
         // Add event listener for reclustering

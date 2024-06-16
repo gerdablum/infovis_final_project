@@ -34,11 +34,17 @@
             </div>
         </div>
 
+         <!-- Bar chart -->
+        <div class="container" id="barChartContainer">
+            <h2>Top 20 Genres in <span id="selectedCountry">Selected Country</span></h2>
+            <svg id="barchart"></svg>
+        </div>  
+
         <!-- Radial chart -->
         <div class="container" id="radialChartContainer">
-            <h2>Song features</h2>
+            <h2>Features of Selected Song</h2>
             
-            <div id="hint">Click on a point in the scatterplot to view song features</div>
+            <div id="song_info_hint">Click on a point in the scatterplot to view song features.</div>
             <div id="song_info">
                 <div id ="name"></div>
                 <div id ="artists"></div>
@@ -47,9 +53,10 @@
 
             <p class="heatmap_tooltip tooltip" id="heatmap_tooltip"></p>
             <svg id="radialchart"></svg>
-        </div>
+        </div>      
     </div>
     <script src="{{url_for('static', filename='js/scatterplot.js')}}"></script>
     <script src="{{url_for('static', filename='js/radialchart.js')}}"></script>
+    <script src="{{url_for('static', filename='js/barchart.js')}}"></script>
 </body>
 </html>
