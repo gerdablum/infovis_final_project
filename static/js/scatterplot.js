@@ -85,14 +85,11 @@ document.addEventListener("DOMContentLoaded", function() {
         svg.call(zoom); // Attach zoom behavior to the svg
 
         function updateScatterplotDots(rawData, filteredData, isClustered = false) {
-           // const colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#9467bd", "#8c564b"]; // Distinct colors excluding red
-
+            // Distinct colors excluding red and orange (because they are used for highlighting)
             const colors = ["#1f77b4", "#2ca02c", "#9467bd", "#8c564b", "#e377c2", "#17becf", "#bcbd22"];
 
             // Remove all circles
             zoomableLayer.selectAll("circle").remove();
-
-
             // Draw gray circles for all data points
             zoomableLayer.selectAll("circle.grey")
                 .data(rawData.filter(d => !filteredData.includes(d)))
@@ -103,7 +100,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 .attr("r", 3) // smaller radius for gray circles
                 .attr("class", "grey")
                 .style("fill", "lightgray");
-
             // Draw circles for filtered data
             zoomableLayer.selectAll("circle.black")
                 .data(filteredData)
@@ -123,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         .style("stroke-width", 2);
                     createRadialChart(d['track_id']);
 
-                    // change iframeUrl
+                    // Change iframe url
                     const newUrl = "https://open.spotify.com/embed/track/" + d['track_id'] + "?utm_source=generator";
                     const iframe = document.getElementById('spotify-iframe');
                     iframe.style.display = "block";
@@ -191,12 +187,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 const clusteredData = await sendFeaturesForClustering(selectedFeatures);
                 console.log(clusteredData);
 
-
                 // Update rawData to the clustered data
                 rawData = clusteredData.data;
                 isClustered = true;
                 updateRemoveClusteringButtonState();
-
 
                 // Filter the data as per the selected country before updating scatterplot
                 const selectedValue = dropdown.property("value");
@@ -206,8 +200,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else {
                     filteredClusteredData = clusteredData.data.filter(d => d.country === selectedValue);
                 }
-
-
                 updateScatterplotDots(rawData, filteredClusteredData, true); // Update with clustered data
             } else {
                 console.error('No features selected for clustering');

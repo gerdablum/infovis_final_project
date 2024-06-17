@@ -11,7 +11,6 @@ class SpotifySong:
     name: str
     date: str
     acousticness: float
-
     danceability: float
     duration_ms: int
     instrumentalness: float

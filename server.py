@@ -1,9 +1,8 @@
 from flask import Flask, jsonify, request, render_template
 from data_management import DataManager
+
 app = Flask(__name__)
-
 data_manager = None
-
 
 @app.route('/')
 def index():
@@ -24,7 +23,6 @@ def get_all_songs_per_country(country):
 def load_songs_datapoints():
     cluster_points = data_manager.get_umap_songs()
     return jsonify(cluster_points)
-
 
 @app.route('/api/genres', methods=['GET'])
 def get_genres():
@@ -48,7 +46,6 @@ def get_cluster():
         return jsonify({"error": "features are required"}), 400
     result = data_manager.cluster(features, no_of_clusters)
     return jsonify(result)
-
 
 if __name__ == '__main__':
     data_manager = DataManager()

@@ -20,7 +20,6 @@ function createRadialChart(trackId) {
     .catch(error => console.error('Error:', error));
 }
 
-
 function listToPrettyString(lst) {
     let str = "";
     for (let index = 0; index < lst.length; index++) {
@@ -33,7 +32,7 @@ function listToPrettyString(lst) {
     return str;
 }
 
-// adapted from https://yangdanny97.github.io/blog/2019/03/01/D3-Spider-Chart
+// Adapted from https://yangdanny97.github.io/blog/2019/03/01/D3-Spider-Chart
 function createAudioFeaturesRadialChart(data) {
 
     let parent = document.getElementById("radialChartContainer");
@@ -67,7 +66,7 @@ function createAudioFeaturesRadialChart(data) {
        return angle > 5;
     }
 
-    // create the circles for the radial chart
+    // Create the circles for the radial chart
     svg.selectAll("circle")
     .data(ticks)
     .join(
@@ -79,7 +78,7 @@ function createAudioFeaturesRadialChart(data) {
             .attr("r", d => radialScale(d))
     );
 
-    // create labels
+    // Create labels
     svg.selectAll(".ticklabel")
     .data(ticks)
     .join(
@@ -91,7 +90,7 @@ function createAudioFeaturesRadialChart(data) {
 
     );
 
-    // draw the axes
+    // Draw the axes
     data = data[0]
     delete data['name']
     delete data['artists']
@@ -114,7 +113,7 @@ function createAudioFeaturesRadialChart(data) {
         };
     });
 
-    // draw axis line
+    // Draw axis line
     svg.selectAll("line")
     .data(featureData)
     .join(
@@ -125,7 +124,7 @@ function createAudioFeaturesRadialChart(data) {
             .attr("y2", d => d.line_coord.y)
             .attr("stroke","black"));
 
-    // draw axis label
+    // Draw axis label
     svg.selectAll(".axislabel")
     .data(featureData)
     .join(
@@ -136,8 +135,7 @@ function createAudioFeaturesRadialChart(data) {
             .text(d => d.name));
 
 
-    // create Line
-
+    // Create Line
     coords = getPathCoordinates(data);
     var path = d3.path();
     path.moveTo(coords[0][0], coords[0][1])
@@ -147,8 +145,7 @@ function createAudioFeaturesRadialChart(data) {
     path.closePath();
     console.log(path.toString())
 
-
-    // helper functio to map data to path coordinates
+    // Helper functio to map data to path coordinates
     function getPathCoordinates(data_point){
         let coordinates = [];
         for (var i = 0; i < features.length; i++){
@@ -161,7 +158,7 @@ function createAudioFeaturesRadialChart(data) {
         return coordinates;
     }
 
-    // draw the path element
+    // Draw the path element
     svg.selectAll("path")
         .data(data)
         .join(
@@ -180,13 +177,4 @@ function createAudioFeaturesRadialChart(data) {
         .attr("fill", "#d35400")
         .attr("stroke-opacity", 1)
         .attr("opacity", 0.5);
-
-
-   /* let element = document.getElementById("radialchart");
-    if (element.hasChildNodes()) {
-        element.removeChild(element.firstChild);
-    }
-
-    element.appendChild(svg.node());*/
-
 }
