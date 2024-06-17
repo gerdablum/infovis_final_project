@@ -1,5 +1,5 @@
 body {
-    padding-left: 5em;
+    padding-left: 1em;
     font-family: Calibri, Arial, Helvetica, sans-serif;
     color: #222222;
     background-color: #fff;
@@ -15,7 +15,7 @@ body {
     padding: 0;
 }
 .container {
-    width: 40%;
+    width: 45%;
     float: left; display: table-cell; vertical-align:top; text-align: center; height: auto; padding-top: 0.5vw;
     padding-bottom: 0.5vw; padding-right: 0.5vw;
     border: 0 solid black;

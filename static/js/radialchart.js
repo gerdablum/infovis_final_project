@@ -39,10 +39,10 @@ function createAudioFeaturesRadialChart(data) {
     let parent = document.getElementById("radialChartContainer");
     let parentWith = parent.offsetWidth - 320;
 
-    const margin = {top: 0, right: 20, bottom: 0, left: 20},
+    const margin = {top: 0, right: 40, bottom: 40, left: 40},
     width = parentWith - margin.left - margin.right,
     height = parentWith - margin.top - margin.bottom;
-    const radius = parentWith / 3.5;
+    const radius = parentWith / 3;
     const svg = d3.select("#radialchart");
 
     svg.selectAll("*").remove();
